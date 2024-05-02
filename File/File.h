@@ -4,7 +4,7 @@
 #include <QString>
 #include <QFileInfo>
 
-class File : QObject
+class File : public QObject
 {
     Q_OBJECT
 private:
@@ -18,7 +18,7 @@ public:
     bool getIsThere();
     void update();
 signals:
-    void changes();
+    void changes(QString str);
 };
 
 #endif // FILE_H

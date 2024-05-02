@@ -32,6 +32,6 @@ void File::update()
     if(tillNowThere != isThere || new_size != size){
         size = new_size;
         isThere = tillNowThere;
-        emit changes();
+        emit changes("Something");
     }
 }
