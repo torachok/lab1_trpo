@@ -2,21 +2,13 @@
 #define FILEMANAGER_H
 
 #include <QObject>
-#include "File/File.h"
 #include "ILog/ILog.h"
-#include <QSet>
+#include <QFileInfo>
 
 class FileManager : public QObject
 {
     Q_OBJECT
 private:
-
-    enum State{
-        sizeChange,
-        thereChanges,
-        noChanges,
-    };
-
     class File
     {
     private:
@@ -28,17 +20,27 @@ private:
         int getSize();
         QString getPath();
         bool getIsThere();
-        State update();
+        bool update();
+        QString getInfo();
     };
 private:
     QVector<File> trackFiles;
     ILog *logger;
 public:
-    FileManager(ILog * log);
-
     void addFile(QString path);
     void deleteFile(QString path);
     void updateFile();
+
+    static FileManager& Instance(ILog* log){
+        static FileManager fn(log);
+        return fn;
+    }
+
+private:
+    FileManager(ILog* log);
+    FileManager(FileManager&);
+    FileManager&operator=(FileManager&);
+    ~FileManager(){}
 signals:
     void changes(QString str);
 };

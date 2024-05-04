@@ -8,6 +8,15 @@ FileManager::FileManager(ILog *log) {
 
 void FileManager::addFile(QString path)
 {
+    for(int i = 0; i < trackFiles.size(); i++){
+        if(trackFiles[i].getPath() == path){
+            if(logger)
+                logger->log(path + " already exists");
+            else
+                qWarning("Logger is not initilized");
+            return;
+        }
+    }
     File temp = File(path);
     trackFiles.push_back(temp);
 }
@@ -15,16 +24,8 @@ void FileManager::addFile(QString path)
 void FileManager::updateFile()
 {
     for(File& file:trackFiles){
-        State fileState = file.update();
-        if(fileState == thereChanges){
-            if(file.getIsThere()) emit  changes(file.getPath() + " created");
-            else emit changes(file.getPath() + " deleted");
-        }
-        else if(fileState == sizeChange) {
-            QString temp;
-            temp.setNum(file.getSize());
-            emit changes(file.getPath() + " new size: " + temp + " bytes");
-        }
+        bool fileState = file.update();
+        if(fileState) emit changes(file.getInfo());
     }
 }
 
@@ -51,7 +52,7 @@ bool FileManager::File::getIsThere()
     return isThere;
 }
 
-FileManager::State FileManager::File::update(){
+bool FileManager::File::update(){
     QFileInfo q(path);
 
     int prevSize = size;
@@ -60,7 +61,20 @@ FileManager::State FileManager::File::update(){
     size = (int)q.size();
     isThere = q.exists();
 
-    if(prevThere != isThere) return thereChanges;
-    else if(prevSize != size)return sizeChange;
-    else return noChanges;
+    if(prevThere != isThere || prevSize != size) return true;
+    else return false;
+}
+
+QString FileManager::File::getInfo()
+{
+    QString info = "";
+    if(!isThere){
+        info = path + " not exists";
+    }
+    else{
+        QString strSize;
+        strSize.setNum(size);
+        info = path + " exists, size: " + strSize + " bytes";
+    }
+    return info;
 }

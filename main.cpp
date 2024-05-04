@@ -1,6 +1,5 @@
 #include <QCoreApplication>
 #include "ILog/ILog.h"
-#include <File/File.h>
 #include "FileManager/FileManager.h"
 #include <thread>
 
@@ -29,16 +28,14 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    File temp("test.txt");
     ILog* logger = new ConsoleWriter();
-    FileManager fileManager(logger);
     //fileManager.addFile("C:\\Users\\User\\Documents\\qtcreator_projects\\lab_1\\lab1_trpo\\test.txt");
 
     QVector<QString> pathes = inputFilePath(logger);
-    for(QString & path : pathes) fileManager.addFile(path);
+    for(QString & path : pathes) FileManager::Instance(logger).addFile(path);
 
     while (true){
-        fileManager.updateFile();
+        FileManager::Instance(logger).updateFile();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
