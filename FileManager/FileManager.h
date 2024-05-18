@@ -29,6 +29,7 @@ private:
 public:
     void addFile(QString path);
     void deleteFile(QString path);
+
     void updateFile();
 
     static FileManager& Instance(ILog* log){

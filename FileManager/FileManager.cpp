@@ -2,12 +2,17 @@
 
 FileManager::FileManager(ILog *log) {
     logger = log;
+
+    //Q_ASSERT_X(logger != nullptr, "The mistake was made in FileManager constructor", "The mistake is that logger is not initilized");
+
     if(logger) connect(this, &FileManager::changes, logger, &ILog::log);
     else qWarning("Logger is not initialized!");
 }
 
 void FileManager::addFile(QString path)
 {
+    //Q_ASSERT_X(logger != nullptr, "The mistake was made in addFile", "The mistake is that logger is not initilized");
+
     for(int i = 0; i < trackFiles.size(); i++){
         if(trackFiles[i].getPath() == path){
             if(logger)
@@ -19,6 +24,16 @@ void FileManager::addFile(QString path)
     }
     File temp = File(path);
     trackFiles.push_back(temp);
+}
+
+void FileManager::deleteFile(QString path)
+{
+    for(int i = 0; i< trackFiles.size();i++)
+        if(trackFiles[i].getPath() == path)
+        {
+            trackFiles.erase((trackFiles.begin() + i));
+            break;
+        }
 }
 
 void FileManager::updateFile()
